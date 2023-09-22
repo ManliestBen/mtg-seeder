@@ -1,7 +1,9 @@
 import * as fs from 'fs'
+import { users } from '../config/userData.js'
 import { Card } from '../models/card.js'
+import { User } from '../models/user.js'
 
-async function seedDb(req, res) {
+async function seedDbCards(req, res) {
   // define an array to hold all of the card objects fetched from API
   let cards = []
 
@@ -42,6 +44,21 @@ async function seedDb(req, res) {
   // })
 }
 
+async function seedDbUsers(req, res) {
+  async function addUsersToDb() {
+    for await (let user of users) {
+      delete user["id"]
+      let newUser = await User.create(user)
+      console.log(`Created ${user.name}`)
+    }
+  }
+
+  await addUsersToDb()
+  console.log('completed operation')
+  res.redirect('/')
+}
+
 export {
-  seedDb
+  seedDbCards,
+  seedDbUsers
 }
